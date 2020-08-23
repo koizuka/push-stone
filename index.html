@@ -43,8 +43,6 @@
             "  S  "
           ],
           board: [],
-          sx: 0,
-          sy: 0,
           history: [],
           mutation: []
         },
@@ -114,7 +112,7 @@
                 this.set(sx, sy, " ");
               }
             } else if (this.get(nx, ny) == "G") {
-              console.log("clear");
+              alert(`おめでとう。 ${this.history.length} 手でした。`);
             }
             if (this.mutation.length > 0) {
               this.history.push({ label, mutation: this.mutation });
