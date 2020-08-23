@@ -18,11 +18,14 @@
     >
       <table border="1">
         <tr v-for="(line, i) in board" :key="i">
-          <td v-for="(c, j) in line" :key="j">{{ c == ' ' ? '&nbsp;' : c }}</td>
+          <td v-for="(c, j) in line" :key="j">
+            {{ emoji[c] == ' ' ? '&nbsp;' : emoji[c] }}
+          </td>
         </tr>
       </table>
       {{ history.length }} step. [{{ summary }}] <br />
-      矢印キーで S を操作して、o を押してどけて Gに行こう。<br />
+      矢印キーで S {{ emoji['S'] }} を操作して、{{ emoji['o'] }} を押してどけて
+      {{ emoji['G'] }} に行こう。<br />
       <button v-on:click="undo()">スペースキーでundo</button>,
       <button v-on:click="clear()">Escapeで最初から</button>
     </div>
@@ -44,7 +47,14 @@
           ],
           board: [],
           history: [],
-          mutation: []
+          mutation: [],
+          emoji: {
+            o: "🎱",
+            G: "🎯",
+            " ": " ",
+            x: "🚧",
+            S: "🧍‍♂️"
+          }
         },
         computed: {
           width() {
