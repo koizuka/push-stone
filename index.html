@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <title>My first Vue app</title>
+    <script src="https://unpkg.com/vue"></script>
+  </head>
+  <body>
+    <div
+      id="app"
+      tabindex="0"
+      v-on:keydown.up="move(0,-1)"
+      v-on:keydown.down="move(0,1)"
+      v-on:keydown.left="move(-1,0)"
+      v-on:keydown.right="move(1,0)"
+      v-on:keydown.space="undo()"
+      v-on:keydown.escape="clear()"
+    >
+      <table border="1">
+        <tr v-for="(line, i) in board" :key="i">
+          <td v-for="(c, j) in line" :key="j">{{ c == ' ' ? '&nbsp;' : c }}</td>
+        </tr>
+      </table>
+      {{ history.length }} step. 矢印キーで S を操作して、o を押してどけて
+      Gに行こう。スペースキーでundo, Escapeで最初から
+    </div>
+
+    <script>
+      var app = new Vue({
+        el: "#app",
+        data: {
+          problem: [
+            "xxGxx",
+            "x   x",
+            "oo oo",
+            " ooo ",
+            "o   o",
+            " ooo ",
+            "     ",
+            "     ",
+            "  S  "
+          ],
+          board: [],
+          sx: 0,
+          sy: 0,
+          history: [],
+          mutation: []
+        },
+        computed: {
+          width() {
+            return this.board[0].length;
+          },
+          height() {
+            return this.board.length;
+          }
+        },
+        created() {
+          this.clear();
+        },
+        methods: {
+          clear() {
+            this.history = [];
+            let board = [];
+            for (let l of this.problem) {
+              board.push([...l]);
+            }
+            this.board = board;
+          },
+          get(x, y) {
+            if (x < 0 || x >= this.width || y < 0 || y >= this.height)
+              return "x";
+            return this.board[y][x];
+          },
+          set(x, y, c) {
+            if (x < 0 || x >= this.width || y < 0 || y >= this.height) return;
+            this.mutation.push({ x, y, old: this.board[y][x], new: c });
+            this.board[y][x] = c;
+          },
+          undo() {
+            if (this.history.length > 0) {
+              mutation = this.history.pop();
+              for (c of mutation) {
+                this.set(c.x, c.y, c.old);
+              }
+            }
+          },
+          move(dx, dy) {
+            for (y = 0; y < this.height; ++y) {
+              for (x = 0; x < this.width; ++x) {
+                if (this.get(x, y) == "S") {
+                  this.sx = x;
+                  this.sy = y;
+                  break;
+                }
+              }
+            }
+            this.mutation = [];
+
+            const sx = this.sx;
+            const sy = this.sy;
+            const nx = sx + dx;
+            const ny = sy + dy;
+            if (this.get(nx, ny) == " ") {
+              this.set(nx, ny, "S");
+              this.set(sx, sy, " ");
+            } else if (this.get(nx, ny) == "o") {
+              if (this.get(nx + dx, ny + dy) == " ") {
+                this.set(nx + dx, ny + dy, "o");
+                this.set(nx, ny, "S");
+                this.set(sx, sy, " ");
+              }
+            } else if (this.get(nx, ny) == "G") {
+              console.log("clear");
+            }
+            if (this.mutation.length > 0) {
+              this.history.push(this.mutation);
+              this.mutation = [];
+            }
+          }
+        }
+      });
+    </script>
+  </body>
+</html>
