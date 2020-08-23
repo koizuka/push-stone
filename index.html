@@ -22,7 +22,8 @@
         </tr>
       </table>
       {{ history.length }} step. [{{ summary }}] <br />
-      矢印キーで S を操作して、o を押してどけて Gに行こう。スペースキーでundo,
+      矢印キーで S を操作して、o を押してどけて Gに行こう。<br />
+      <button v-on:click="undo()">スペースキーでundo</button>,
       <button v-on:click="clear()">Escapeで最初から</button>
     </div>
 
