@@ -9,10 +9,10 @@
     <div
       id="app"
       tabindex="0"
-      v-on:keydown.up="move(0,-1)"
-      v-on:keydown.down="move(0,1)"
-      v-on:keydown.left="move(-1,0)"
-      v-on:keydown.right="move(1,0)"
+      v-on:keydown.up="move(0,-1,'↑')"
+      v-on:keydown.down="move(0,1,'↓')"
+      v-on:keydown.left="move(-1,0, '←')"
+      v-on:keydown.right="move(1,0, '→')"
       v-on:keydown.space="undo()"
       v-on:keydown.escape="clear()"
     >
@@ -21,8 +21,9 @@
           <td v-for="(c, j) in line" :key="j">{{ c == ' ' ? '&nbsp;' : c }}</td>
         </tr>
       </table>
-      {{ history.length }} step. 矢印キーで S を操作して、o を押してどけて
-      Gに行こう。スペースキーでundo, Escapeで最初から
+      {{ history.length }} step. [{{ summary }}] <br />
+      矢印キーで S を操作して、o を押してどけて Gに行こう。スペースキーでundo,
+      <button v-on:click="clear()">Escapeで最初から</button>
     </div>
 
     <script>
@@ -52,6 +53,9 @@
           },
           height() {
             return this.board.length;
+          },
+          summary() {
+            return this.history.map((i) => i.label).join("");
           }
         },
         created() {
@@ -78,26 +82,25 @@
           },
           undo() {
             if (this.history.length > 0) {
-              mutation = this.history.pop();
+              mutation = this.history.pop().mutation;
               for (c of mutation) {
                 this.set(c.x, c.y, c.old);
               }
             }
           },
-          move(dx, dy) {
+          move(dx, dy, label) {
+            let sx, sy;
             for (y = 0; y < this.height; ++y) {
               for (x = 0; x < this.width; ++x) {
                 if (this.get(x, y) == "S") {
-                  this.sx = x;
-                  this.sy = y;
+                  sx = x;
+                  sy = y;
                   break;
                 }
               }
             }
             this.mutation = [];
 
-            const sx = this.sx;
-            const sy = this.sy;
             const nx = sx + dx;
             const ny = sy + dy;
             if (this.get(nx, ny) == " ") {
@@ -113,7 +116,7 @@
               console.log("clear");
             }
             if (this.mutation.length > 0) {
-              this.history.push(this.mutation);
+              this.history.push({ label, mutation: this.mutation });
               this.mutation = [];
             }
           }
