@@ -24,8 +24,8 @@
         </tr>
       </table>
       {{ history.length }} step. [{{ summary }}] <br />
-      矢印キーで S {{ emoji['S'] }} を操作して、{{ emoji['o'] }} を押してどけて
-      {{ emoji['G'] }} に行こう。<br />
+      矢印キーで {{ emoji['S'] }} を操作して、{{ emoji['o'] }} を押してどけて {{
+      emoji['G'] }} に行こう。<br />
       <button v-on:click="undo()">スペースキーでundo</button>,
       <button v-on:click="clear()">Escapeで最初から</button>
     </div>
