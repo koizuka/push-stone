@@ -9,19 +9,42 @@
     <div
       id="app"
       tabindex="0"
-      v-on:keydown.up="move(0,-1,'↑')"
-      v-on:keydown.down="move(0,1,'↓')"
-      v-on:keydown.left="move(-1,0, '←')"
-      v-on:keydown.right="move(1,0, '→')"
+      v-on:keydown.up="up()"
+      v-on:keydown.down="down()"
+      v-on:keydown.left="left()"
+      v-on:keydown.right="right()"
       v-on:keydown.space="undo()"
       v-on:keydown.escape="clear()"
     >
-      <table border="1">
-        <tr v-for="(line, i) in board" :key="i">
-          <td v-for="(c, j) in line" :key="j">
-            {{ emoji[c] == ' ' ? '&nbsp;' : emoji[c] }}
-          </td>
-        </tr>
+      <table>
+        <td>
+          <table border="1">
+            <tr v-for="(line, i) in board" :key="i">
+              <td v-for="(c, j) in line" :key="j">
+                {{ emoji[c] == ' ' ? '&nbsp;' : emoji[c] }}
+              </td>
+            </tr>
+          </table>
+        </td>
+        <td>
+          <table>
+            <tr>
+              <td />
+              <td><button v-on:click="up()">↑</button></td>
+              <td />
+            </tr>
+            <tr>
+              <td><button v-on:click="left()">←</button></td>
+              <td />
+              <td><button v-on:click="right()">→</button></td>
+            </tr>
+            <tr>
+              <td />
+              <td><button v-on:click="down()">↓</button></td>
+              <td />
+            </tr>
+          </table>
+        </td>
       </table>
       {{ history.length }} step. [{{ summary }}] <br />
       矢印キーで {{ emoji['S'] }} を操作して、{{ emoji['o'] }} を押してどけて {{
@@ -88,6 +111,18 @@
             if (x < 0 || x >= this.width || y < 0 || y >= this.height) return;
             this.mutation.push({ x, y, old: this.board[y][x], new: c });
             this.board[y][x] = c;
+          },
+          up() {
+            this.move(0, -1, "↑");
+          },
+          down() {
+            this.move(0, 1, "↓");
+          },
+          left() {
+            this.move(-1, 0, "←");
+          },
+          right() {
+            this.move(1, 0, "→");
           },
           undo() {
             if (this.history.length > 0) {
